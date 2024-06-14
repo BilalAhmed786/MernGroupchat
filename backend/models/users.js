@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
 
-    name: {
+    username: {
         type: String,
         required: true
     },
@@ -19,6 +19,17 @@ const userSchema = new mongoose.Schema({
     retypepassword: {
         type: String,
         required: true
+
+    },
+    role: {
+        type: String,
+        default:"chatuser"
+
+    },
+
+    status:{
+        type:String,
+        default:"offline"
 
     }
 

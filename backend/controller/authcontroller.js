@@ -6,14 +6,15 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 dotenv.config();
 export const register = async (req, res) => {
-
+   
+    
     const validation = []
 
-    const { name, email, password, retypepassword } = req.body
+    const { username, email, password, retypepassword } = req.body
 
 
-
-    if (!name || !email || !password || !retypepassword) {
+            
+    if (!username || !email || !password || !retypepassword) {
 
         validation.push('All fields required')
 
@@ -42,14 +43,14 @@ export const register = async (req, res) => {
 
     if (validation.length > 0) {
 
-        return res.json(validation)
+        return res.status(400).json({valid:validation})
     }
     try {
 
         const hashpassword = await bcrypt.hash(password, 10)
 
 
-        const usercreate = new User({ name, email, password: hashpassword, retypepassword: hashpassword })
+        const usercreate = new User({ username, email, password: hashpassword, retypepassword: hashpassword })
 
         const usercreated = await usercreate.save();
 
@@ -76,8 +77,8 @@ export const register = async (req, res) => {
 
 export const login = (req, res, next) => {
     passport.authenticate('local', {
-        successRedirect: '/authorize',
-        failureRedirect: '/validate',
+        successRedirect: '/api/auth/authorize',
+        failureRedirect: '/api/auth/validate',
         failureFlash: true
 
     })(req, res, next)
@@ -89,7 +90,8 @@ export const validate = (req, res) => {
 
     const flashmessage = req.flash('error')[0]
 
-    return res.json(flashmessage)
+
+    return res.status(400).json(flashmessage)
 
 }
 
@@ -121,17 +123,17 @@ export const forgetpass = async (req, res) => {
 
     if (!email) {
 
-        return res.json('field is required')
+        return res.status(400).json({msg:'field is required'})
     }
 
     try {
 
         const userfind = await User.findOne({ email })
-        console.log(userfind)
+        
 
         if (!userfind) {
 
-            return res.json('not registerd')
+            return res.status(400).json({msg:'not registerd'})
         }
 
 
@@ -163,11 +165,14 @@ export const forgetpass = async (req, res) => {
 
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
+                
                 console.log(error);
+            
             } else {
-                console.log('Email sent: ' + info.response);
+              
 
-                return res.json('email sent for reset password')
+                return res.json({success:'email sent for reset password'})
+            
             }
         });
 
@@ -183,22 +188,36 @@ export const forgetpass = async (req, res) => {
 
 export const resetpass = async (req, res) => {
 
-    const { token, password, confirmpassword } = req.body
+    const { token, newPassword, confirmPassword } = req.body
 
+        const validation = []
+   
+        if (!newPassword || !confirmPassword) {
 
-    if (!password || !confirmpassword) {
-
-        return res.json('all fields required')
+        validation.push('all fields required')
     }
 
 
-    if (password !== confirmpassword) {
+    if (newPassword !== confirmPassword) {
 
-        return res.json('Mismatch passwords')
+        validation.push('Mismatch passwords')
 
     }
 
+    if(newPassword.length <= 5){
 
+        
+        validation.push('password atleast six character long')
+   
+    }
+
+
+    if(validation.length > 0){
+
+
+        return res.status(400).json(validation)
+    
+    }
     
            
       const decode =  jwt.verify(token,process.env.TOKENSEC, (err, decoded) => {
@@ -206,6 +225,8 @@ export const resetpass = async (req, res) => {
          if (err){
             
             console.log('invalid user')
+
+            return res.json({valid:'sessoin expire try again'})
          
         };
 
@@ -215,7 +236,7 @@ export const resetpass = async (req, res) => {
     });
     
 
-    const hashpassword = await bcrypt.hash(password, 10)
+    const hashpassword = await bcrypt.hash(newPassword, 10)
 
     try {
 
@@ -229,14 +250,16 @@ export const resetpass = async (req, res) => {
 
             console.log('user updated')
 
-            return res.json('password chage successfully')
+            return res.json({success:'password chage successfully'})
         }
 
 
     } catch (error) {
        
         if (error) {
-            res.json('session expire try again later')
+            validation.push('session expired')
+
+            return res.status(400).json(validation)
         }
     }
 }
