@@ -1,11 +1,12 @@
 import React from 'react'
 import Users from './users'
 
-const sidebar = ({chatroomname}) => {
-  return (
+const sidebar = ({sock}) => {
+
+return (
     <div className='sidebar'>
 
-      <Users chatroomname ={chatroomname} />
+      <Users sock ={sock} />
 
     </div>
   )

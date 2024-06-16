@@ -49,7 +49,7 @@ const ChatroomList = () => {
           {chatroomdata && chatroomdata.map((room) => (
             <li key={room._id} className="flex justify-between text-black items-center py-2 border-b">
               <span className="text-lg">{room.name}</span>
-              <Link to={`http://localhost:5173/chatroom/${room._id}/${userdata._id}`}> <button className="bg-red-600 text-xl text-white px-4 py-2 rounded hover:bg-blue-600">
+              <Link to={`/saifchat/${room._id}/${userdata._id}`}> <button className="bg-red-600 text-xl text-white px-4 py-2 rounded hover:bg-blue-600">
                 Join
               </button>
               </Link>

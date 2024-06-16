@@ -5,33 +5,22 @@ import Topbar from '../roomcomponents/topbar'
 import Input from '../roomcomponents/input'
 import {useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
-const sock = io('http://localhost:4000',{autoConnect:false});
-const chatroomlist = () => {
+const sock = io('http://localhost:4000',{autoConnect:false}); //socket conneciton establish in parent
 
+const chatroomlist = () => {
+  
   const {chatroomid,userid} = useParams();
 
   useEffect(() => {
   
-  const socket = sock.connect();
+  const socket = sock.connect();  //conenct socket in parent
 
-  // Join chatroom
-      socket.emit('joinRoom', {chatroomid,userid});
-  
-      socket.on('message', (msg) => {
-          
-         console.log(msg)
-        });
-        socket.on('roomUsers', ({room,users}) => {
-          
-          console.log(room,users)
-         });
-  
-return ()=>{
  
-  socket.disconnect();
-}
+  return ()=>{
+ 
+   socket.disconnect();//disconnect socket from parent
+ }
 
-      
   }, []);
   return (
     <div className='wrapperchat'>
@@ -41,12 +30,12 @@ return ()=>{
     <div className='home'>
 
     <div className='chatcontainer'>
-    <Sidebar chatroomname ={name}/>
-    <Chat />      
+    <Sidebar sock ={sock}/>
+    <Chat sock = {sock} chatroomid ={chatroomid} userid ={userid} />      
     </div>
   </div>
   <div className='inputcontainer'>
-  <Input/>
+  <Input sock = {sock} chatroomid ={chatroomid} userid ={userid}/>
   </div>
   </div>
   )

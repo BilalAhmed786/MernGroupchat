@@ -26,8 +26,8 @@ function App() {
             <Route path='/forgetpassword' element={<Forgetpassword />} />
             <Route path='/resetpassword/:token' element={<ResetPassword />} />
             {/* chatroom routes */}
-            <Route path='/chatroomlist' element={<Chatroomprotect Component={Chatroomlist} />} />
-            <Route path='/chatroom/:chatroomid/:userid' element = {<Chatroomprotect Component={Chatroom} />} />
+              <Route path='/chatroomlist' element={<Chatroomprotect Component={Chatroomlist} />} />
+              <Route path='/saifchat/:chatroomid/:userid' element = {<Chatroom />}/>
             {/* admin routes */}
             <Route path='/admindashboard' element = {<Admindashboard />} />
             <Route path='/createchatroom' element = {<AddRoomForm />} />

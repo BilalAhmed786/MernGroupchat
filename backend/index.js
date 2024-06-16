@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 dotenv.config();
 import con from './database/db.js';
-import roomuser from './models/roomusers.js';
-import messages from './models/message.js';
+import { saveuser, finduser, collectuser, removeuser,getcurrentuser } from './utils/user.js';
+import { savemsg,getmsg } from './utils/messages.js';
 import cors from 'cors'
 import session from 'express-session';
 import passport from './passportconfig/config.js';
@@ -42,23 +42,19 @@ server.listen(process.env.PORT, () => {
 // Set up Socket.IO connection handling
 io.on('connection', (socket) => {
 
-
+  console.log(socket.id)
   socket.on('joinRoom', async (msg) => {
-
-    
-    const { chatroomid, userid } = msg
 
     try {
 
-      const user = roomuser({ room: chatroomid, user: userid, socketid: socket.id })
+
+      const { chatroomid, userid } = msg
 
 
+      const usersaved = await saveuser(chatroomid,userid,socket.id)
 
-      const userroom = await user.save()
-
-
-      const findusers = await roomuser.find({ room: chatroomid }).sort({ createdAt: -1 }).populate('user').populate('room')
-
+      const findusers = await finduser(chatroomid)
+      
 
       socket.join(chatroomid)
 
@@ -69,26 +65,95 @@ io.on('connection', (socket) => {
           'message',
           `${findusers[0].user.username} join the chatroom`)
 
-             
-          
-          //collect chatroom users in array
-            const chatuser = findusers.map(users=>{
-               
-              return users.user.username
+       //collect chatroom users in array
 
-            })
+      const chatuser = collectuser(findusers)
 
 
-    // Send users and room info
-          io.to(chatroomid).emit('roomUsers', {
-        
-          room: findusers[0].room.name,
-          users: chatuser,
+      // Send users and room info
+      io.to(chatroomid).emit('roomUsers', {
+
+        room: findusers[0].room.name,
+        users: chatuser,
+      });
+
+      //on login all previous messages will display
+      const messages = await getmsg(chatroomid,socket.id);
+      
+      messages.forEach(message => {
+        socket.emit('roommessage', {
+          userid:message.user,
+          name: message.user.username,
+          message: message.message,
+          formattedTimestamp: message.formattedTimestamp
+        });
+      });
+
+} catch (error) {
+
+
+      console.log(error)
+    }
+
+
+  });
+
+
+// Listen for chatMessage
+socket.on('chatmessage', async(msg) => {
+  
+    const { chatmessage,chatroomid,userid } = msg
+  
+try{
+    const savechat = await savemsg(chatmessage,chatroomid,userid)
+
+    const user = await getcurrentuser(socket.id)
+
+      io.to(chatroomid).emit('roommessage',{ 
+      userid:savechat.user,  
+      name:user.user.username,
+      message: savechat.message,
+      formattedTimestamp: savechat.formattedTimestamp
+    });
+
+
+}catch(error){
+  
+  console.log(error)
+}
+
 });
 
 
+  // Handle disconnection
+  socket.on('disconnect', async () => {
+    console.log(`disconnect ${socket.id}`)
+    try {
 
-     
+      const disconetuser = await removeuser(socket.id)
+
+         if (disconetuser) {
+
+        io.to(disconetuser.room._id.toString()).emit(
+          'message',
+          `${disconetuser.user.username} has left the chat`)
+
+        const findusers = await finduser(disconetuser.room._id)
+
+            if (findusers.length > 0) {
+
+          const chatuser = collectuser(findusers)
+
+          // Send users and room info
+          io.to(disconetuser.room._id.toString()).emit('roomUsers', {
+           room: findusers[0].room.name,
+            users: chatuser,
+          });
+
+        }
+
+
+      }
 
     } catch (error) {
 
@@ -96,38 +161,7 @@ io.on('connection', (socket) => {
     }
 
 
-
-
-
   });
 
 
-
-
-  // Handle disconnection
-  socket.on('disconnect', async () => {
-    console.log(`disconnect ${socket.id}`)
-    try {
-      const disconetuser = await roomuser.findOneAndDelete({ socketid: socket.id }).populate('user').populate('room')
-
-      if (disconetuser) {
-console.log(disconetuser.room)
-        io.to(disconetuser.room._id.toString()).emit(
-          'message',  
-          `${disconetuser.user.username} has left the chat`)
-
-      }
-
-    } catch (error) {
-
-
-      if (error) {
-
-        console.log('user not exist')
-      }
-
-    }
-
-
-  });
-});
+})

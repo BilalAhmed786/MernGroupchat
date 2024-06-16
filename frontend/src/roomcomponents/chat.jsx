@@ -1,10 +1,10 @@
 import React from 'react'
 import Messages from './messages'
 
-const chat = () => {
+const chat = ({sock,chatroomid,userid}) => {
   return (
     <div className='chat'>
-        <Messages/>
+        <Messages sock={sock} chatroomid={chatroomid}  userid={userid}/>
        
     </div>
   )
