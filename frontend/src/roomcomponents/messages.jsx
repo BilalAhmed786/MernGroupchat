@@ -48,13 +48,13 @@ console.log(messages)
         <div key={index}  ref={index === messages.length - 1 ? lastMessageRef : null}>
           {msg.type === 'chat' ? (
             msg.userid && msg.userid._id === userid || msg.userid === userid  ? (
-              <div className='text-left bg-blue-100 m-4 mr-5 p-4 rounded-lg ml-auto w-1/3'>
-                <strong>You:</strong> {msg.message} <br />
+              <div className='text-left bg-blue-100 m-4 mr-5 p-6 rounded-lg ml-auto w-1/3'>
+                <strong>You:</strong><p className='leading-tight'>{msg.message}</p> <br />
                 <small className='text-xxxs text-red-300'>{msg.formattedTimestamp}</small>
               </div>
             ) : (
-              <div key={index}  className='bg-gray-100 p-4 rounded-lg ml-4 mr-auto w-1/3'>
-                <strong>{msg.name}:</strong> {msg.message} <br />
+              <div key={index}  className='bg-gray-100 m-4 p-6 rounded-lg ml-4 mr-auto w-1/3'>
+                <strong>{msg.name}:</strong> <p className='leading-tight'>{msg.message}</p> <br />
                 <small className='text-xxxs text-red-500 font-bold' >{msg.formattedTimestamp}</small>
               </div>
             )

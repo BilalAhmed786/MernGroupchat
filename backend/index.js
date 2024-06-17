@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 dotenv.config();
 import con from './database/db.js';
-import { saveuser, finduser, collectuser, removeuser,getcurrentuser } from './utils/user.js';
-import { savemsg,getmsg } from './utils/messages.js';
+import { saveuser, finduser, collectuser, removeuser, getcurrentuser } from './utils/user.js';
+import { savemsg, getmsg } from './utils/messages.js';
 import cors from 'cors'
 import session from 'express-session';
 import passport from './passportconfig/config.js';
@@ -51,10 +51,11 @@ io.on('connection', (socket) => {
       const { chatroomid, userid } = msg
 
 
-      const usersaved = await saveuser(chatroomid,userid,socket.id)
+
+      const usersaved = await saveuser(chatroomid, userid, socket.id)
 
       const findusers = await finduser(chatroomid)
-      
+
 
       socket.join(chatroomid)
 
@@ -65,7 +66,7 @@ io.on('connection', (socket) => {
           'message',
           `${findusers[0].user.username} join the chatroom`)
 
-       //collect chatroom users in array
+      //collect chatroom users in array
 
       const chatuser = collectuser(findusers)
 
@@ -78,18 +79,18 @@ io.on('connection', (socket) => {
       });
 
       //on login all previous messages will display
-      const messages = await getmsg(chatroomid,socket.id);
-      
+      const messages = await getmsg(chatroomid,userid);
+
       messages.forEach(message => {
         socket.emit('roommessage', {
-          userid:message.user,
+          userid: message.user,
           name: message.user.username,
           message: message.message,
           formattedTimestamp: message.formattedTimestamp
         });
       });
 
-} catch (error) {
+    } catch (error) {
 
 
       console.log(error)
@@ -99,30 +100,30 @@ io.on('connection', (socket) => {
   });
 
 
-// Listen for chatMessage
-socket.on('chatmessage', async(msg) => {
-  
-    const { chatmessage,chatroomid,userid } = msg
-  
-try{
-    const savechat = await savemsg(chatmessage,chatroomid,userid)
+  // Listen for chatMessage
+  socket.on('chatmessage', async (msg) => {
 
-    const user = await getcurrentuser(socket.id)
+    const { chatmessage, chatroomid, userid } = msg
 
-      io.to(chatroomid).emit('roommessage',{ 
-      userid:savechat.user,  
-      name:user.user.username,
-      message: savechat.message,
-      formattedTimestamp: savechat.formattedTimestamp
-    });
+    try {
+      const savechat = await savemsg(chatmessage, chatroomid, userid)
+
+      const user = await getcurrentuser(socket.id)
+
+      io.to(chatroomid).emit('roommessage', {
+        userid: savechat.user,
+        name: user.user.username,
+        message: savechat.message,
+        formattedTimestamp: savechat.formattedTimestamp
+      });
 
 
-}catch(error){
-  
-  console.log(error)
-}
+    } catch (error) {
 
-});
+      console.log(error)
+    }
+
+  });
 
 
   // Handle disconnection
@@ -132,7 +133,7 @@ try{
 
       const disconetuser = await removeuser(socket.id)
 
-         if (disconetuser) {
+      if (disconetuser) {
 
         io.to(disconetuser.room._id.toString()).emit(
           'message',
@@ -140,19 +141,17 @@ try{
 
         const findusers = await finduser(disconetuser.room._id)
 
-            if (findusers.length > 0) {
+        if (findusers.length > 0) {
 
           const chatuser = collectuser(findusers)
 
           // Send users and room info
           io.to(disconetuser.room._id.toString()).emit('roomUsers', {
-           room: findusers[0].room.name,
+            room: findusers[0].room.name,
             users: chatuser,
           });
 
         }
-
-
       }
 
     } catch (error) {

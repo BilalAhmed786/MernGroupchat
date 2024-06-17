@@ -1,16 +1,48 @@
 import roomuser from '../models/roomusers.js';
+import trackuser from '../models/trackusers.js';
+
+
+
 export const saveuser = async (chatroomid, userid, id) => {
 
 
     try {
 
+        // for track messages
+        const trkuser = await trackuser.findOne({ user: userid })
+
+        if (!trkuser) {
+
+            const trakuser = trackuser({ user: userid, room: chatroomid })
+
+            await trakuser.save()
+
+        }
+
+        const finduser = await roomuser.findOne({ user: userid })
+
+        if (finduser) {
+
+
+            const updateroomuser = await roomuser.findByIdAndUpdate(
+                userid,
+                { socketid: id })
+
+
+            return updateroomuser
+
+        }
+
         const user = roomuser({ room: chatroomid, user: userid, socketid: id })
 
+        await user.save()
 
+        if (user) {
 
-        const userroom = await user.save()
+            return user
 
-        return user
+        }
+
     } catch (error) {
 
 
