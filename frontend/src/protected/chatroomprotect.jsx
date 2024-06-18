@@ -16,7 +16,7 @@ useEffect(()=>{
     try{
 
         const user = await axios.get('/api/auth/authorize')
-    
+    console.log(user.data.msg)
         if(user.data.msg === 'invalid user'){
      
         navigate('/')

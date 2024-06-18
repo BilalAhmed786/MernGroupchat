@@ -1,4 +1,5 @@
 import ChatRoom from "../models/chatroom.js"
+import roomuser from "../models/roomusers.js"
 
 
 
@@ -45,10 +46,14 @@ export const roomcreate = async (req, res) => {
 
 }
 export const getroomcreate = async (req, res) => {
+            
+        const {search} = req.query
 
-    try {
+     try {
 
-        const rooms = await ChatRoom.find()
+       const query = {name:{$regex:new RegExp(search,'i')}}
+        
+       const rooms = await ChatRoom.find(query)
 
 
         return res.json(rooms)
@@ -60,3 +65,24 @@ export const getroomcreate = async (req, res) => {
 
 
 } 
+
+export const roomusers =async(req,res)=>{
+
+    try{
+
+
+        const roomusers = await roomuser.find().populate('room')
+        
+        if(roomusers.length > 0){
+
+            res.json(roomusers)
+
+        }
+        
+
+    }catch(error){
+
+        console.log(error)
+    }
+
+}

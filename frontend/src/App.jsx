@@ -11,6 +11,7 @@ import Chatroomprotect from './protected/chatroomprotect'
 // admin pages
 import Admindashboard from './admin/admindashboard'
 import AddRoomForm from './admin/roomcreate'
+import Pagenotfound from './pages/pagenotfound'
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 function App() {
@@ -31,6 +32,7 @@ function App() {
             {/* admin routes */}
             <Route path='/admindashboard' element = {<Admindashboard />} />
             <Route path='/createchatroom' element = {<AddRoomForm />} />
+            <Route path='/*' element = {<Pagenotfound />} />
 
           </Routes>
         </BrowserRouter>
