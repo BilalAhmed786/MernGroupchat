@@ -81,7 +81,7 @@ io.on('connection', (socket) => {
       //on login all previous messages will display
       const messages = await getmsg(chatroomid,userid);
 
-      messages.forEach(message => {
+      messages && messages.forEach(message => {
         socket.emit('roommessage', {
           userid: message.user,
           name: message.user.username,

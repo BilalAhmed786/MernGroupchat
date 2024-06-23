@@ -6,6 +6,7 @@ import { register,login,validate,authuser,logout,forgetpass,resetpass} from '../
 const router = express.Router();
 
 router.post('/register',register);
+
 router.post('/login',login);
 router.get('/logout',logout);
 router.post('/forgetpassword',forgetpass);

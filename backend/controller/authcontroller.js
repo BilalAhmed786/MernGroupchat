@@ -75,6 +75,8 @@ export const register = async (req, res) => {
 }
 
 
+
+
 export const login = (req, res, next) => {
     passport.authenticate('local', {
         successRedirect: '/api/auth/authorize',

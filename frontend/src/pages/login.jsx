@@ -9,75 +9,81 @@ const Login = () => {
   const navigate = useNavigate()
   const [email, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userdetail,setuserdetail]= useState('')
+  const [userdetail, setuserdetail] = useState('')
 
+console.log(userdetail)
+  const userdet = async () => {
 
-  const userdet = async()=>{
- 
-    const user = await axios.get('/api/auth/authorize')
+    try {
 
-    if(user.data.username){
+      const user = await axios.get('/api/auth/authorize')
+      if (user.data.username) {
 
-      setuserdetail(user.data.name)
-   
-    }else{
+        setuserdetail(user.data.role)
 
-        navigate('/')
+      }
 
+    } catch (error) {
+
+      console.log(error)
     }
+
 
 
   }
 
-  
 
- 
- 
+
+
+
   useEffect(() => {
-   
-    userdet()
-   
 
-    if(userdetail){
+    userdet()
+
+
+    if (userdetail === 'chatuser') {
 
       navigate('/chatroomlist')
+    }
+    else if (userdetail === 'admin') {
+
+      navigate('/admindashboard')
+
     }else{
-
       navigate('/')
-
     }
 
-   
+
   }, [userdetail])
 
 
-  
+
 
 
   const handleSubmit = async (event) => {
-    
+
     event.preventDefault();
     try {
       const response = await axios.post('/api/auth/login', { email, password });
 
-       
-        setuserdetail(response.data)
+
+      setuserdetail(response.data)
 
     }
 
     catch (error) {
 
-      if(error.response.data === 'Missing credentials'){
+      if (error.response.data === 'Missing credentials') {
 
-            toast.error('All fields requried')
-    
-      }else{
+        toast.error('All fields requried')
 
-            toast.error(error.response.data)
-    
+      } else {
+
+        toast.error(error.response.data)
+
       }
 
-    }   
+    }
 
     // Add your login logic here
   };
@@ -165,7 +171,7 @@ const Login = () => {
             </button>
           </div>
           <div>
-          <a
+            <a
               href="/register"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
@@ -193,7 +199,7 @@ const Login = () => {
               Register
             </a>
           </div>
-          
+
         </form>
       </div>
     </div>

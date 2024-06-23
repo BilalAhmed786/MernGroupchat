@@ -15,6 +15,10 @@ export default {
         '104': '26rem', // 416px (custom spacing value)
         '108': '27rem', // 432px (custom spacing value)
       },
+
+      borderRadius: {
+        '360': '360px',
+      },
     },
   },
   plugins: [],

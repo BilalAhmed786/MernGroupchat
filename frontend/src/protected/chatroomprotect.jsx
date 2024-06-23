@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const Chatroomprotect = (props) => {
+  const {Component} = props
 const [data,userData]=useState('')
 
-const {Component} = props
    const navigate = useNavigate()
    
 useEffect(()=>{
@@ -16,7 +16,7 @@ useEffect(()=>{
     try{
 
         const user = await axios.get('/api/auth/authorize')
-    console.log(user.data.msg)
+    
         if(user.data.msg === 'invalid user'){
      
         navigate('/')

@@ -1,6 +1,9 @@
 import React, { useRef, useState } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify'
+import { toast } from 'react-toastify';
+import Sidebar from './sidebarnavmenu';
+import Headers from './headers';
+import Footer from './footer';
 const AddRoomForm = () => {
 
     const formRef = useRef(null);
@@ -39,13 +42,19 @@ const AddRoomForm = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+
+        <>
+         <Headers />
+        <div className="flex">
+        <Sidebar />
+        <div className="flex-1 p-4">
+        <div className="mx-auto mt-10 p-6 bg-white">
             <h2 className="text-2xl text-gray-700 text-center font-bold mb-4">Add New Room</h2>
             <form ref={formRef} onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold -mb-10" htmlFor="roomName">
                         Room Name
-                    </label>
+                    </label>    
                     <input
                         type="text"
                         id="roomName"
@@ -77,6 +86,10 @@ const AddRoomForm = () => {
                 </div>
             </form>
         </div>
+        </div>
+      </div>
+      <Footer />
+        </>
     );
 };
 

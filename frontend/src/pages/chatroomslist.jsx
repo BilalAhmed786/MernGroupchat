@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BsPeople } from 'react-icons/bs';
+import Headers from './headers';
+import Footer from './footer';
 
 const ChatroomList = () => {
+  const navigate = useNavigate()
   const [chatroomdata, setRoomdata] = useState([]);
   const [userdata, setUserdata] = useState(null);
   const [searchroom, setSearchRoom] = useState('');
   const [roomusers, setRoomUsers] = useState([]);
 
-  useEffect(() => { 
-    // Get chatroom data
+
+console.log(userdata)
+
+  
+    useEffect(() => { 
+
+
     axios.get(`/api/admin/createroom?search=${searchroom}`)
       .then((response) => {
 
@@ -38,7 +46,7 @@ const ChatroomList = () => {
 
     axios.get('/api/admin/roomuser')
       .then((response) => {
-        console.log(response.data)
+        
         setRoomUsers(response.data);
       })
       .catch((error) => {
@@ -46,11 +54,14 @@ const ChatroomList = () => {
       });
 
 
-  }, [chatroomdata,roomusers])
+  }, [])
 
   return (
+    <>
+    <Headers/>
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl text-center font-bold mb-6 text-black">Chatrooms</h1>
+      <h1 className="text-3xl text-center font-bold mb-6 text-black">Chatrooms</h1><Link to="/admindashboard">{userdata && userdata.role === 'admin' ? <span className='text-sm text-blue-500 float-right mr-6'>Admin Dashboard</span>:""}</Link>
+   
       <input
         className='block h-12 text-center text-sm w-1/2 m-auto outline-0 border'
         type='text'
@@ -82,6 +93,8 @@ const ChatroomList = () => {
         </ul>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 

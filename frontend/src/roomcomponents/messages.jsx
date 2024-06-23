@@ -4,7 +4,7 @@ const messages = ({ sock, chatroomid, userid }) => {
 
   const lastMessageRef = useRef(null);
   const [messages, setMessages] = useState([]);
-console.log(messages)
+
   useEffect(() => {
 
     

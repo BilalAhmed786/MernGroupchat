@@ -8,9 +8,13 @@ import ResetPassword from './pages/resetpass'
 import Chatroom from './pages/chatroom'
 import Chatroomlist from './pages/chatroomslist'
 import Chatroomprotect from './protected/chatroomprotect'
+import Adminapiprotect from './protected/adminapiprotect'
 // admin pages
 import Admindashboard from './admin/admindashboard'
 import AddRoomForm from './admin/roomcreate'
+import Allrooms from './admin/allrooms'
+import Allusers from './admin/allusers'
+import Allmessages from './admin/allmessages'
 import Pagenotfound from './pages/pagenotfound'
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
@@ -30,8 +34,12 @@ function App() {
               <Route path='/chatroomlist' element={<Chatroomprotect Component={Chatroomlist} />} />
               <Route path='/saifchat/:chatroomid/:userid' element = {<Chatroom />}/>
             {/* admin routes */}
-            <Route path='/admindashboard' element = {<Admindashboard />} />
-            <Route path='/createchatroom' element = {<AddRoomForm />} />
+            <Route path='/admindashboard' element = {<Adminapiprotect Component = {Admindashboard} />} />
+            <Route path='/createchatroom' element = {<Adminapiprotect Component = {AddRoomForm} />} />
+            <Route path='/allchatrooms' element = {<Adminapiprotect Component = {Allrooms} />} />
+            <Route path='/allusers' element = {<Adminapiprotect Component = {Allusers} />} />
+            <Route path='/allmessages' element = {<Adminapiprotect Component = {Allmessages} />} />
+            {/* not found */}
             <Route path='/*' element = {<Pagenotfound />} />
 
           </Routes>
