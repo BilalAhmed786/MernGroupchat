@@ -100,6 +100,8 @@ const Allmessages = () => {
         },
     ];
 
+ 
+
     return (
         <>
             <Headers />
@@ -131,6 +133,7 @@ const Allmessages = () => {
                                 selectableRows
                                 selectableRowsHighlight
                                 onSelectedRowsChange={handleRowSelected}
+                                
                             />
                         </div>
                         <div style={{ display: magicform ? 'none' : 'block' }} className='absolute top-24 left-20 bg-slate-100 p-10 rounded'>

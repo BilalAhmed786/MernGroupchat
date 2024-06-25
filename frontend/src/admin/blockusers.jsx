@@ -96,10 +96,10 @@ const Blockusers = () => {
             <div className="flex">
                 <Sidebar />
                 <div className="flex-1 mt-5">
-                    <h1 className='block w-10/12 text-center font-semibold mt-5 text-black text-xl'>Black List Users</h1>
+                    <h1 className='block w-9/12 text-center font-semibold mt-5 text-black text-xl'>Black List Users</h1>
                     <div className='searchproduct flex justify-center text-sm my-4'>
                         <input
-                            className='block w-1/4 outline-0 h-12 text-black m-auto'
+                            className='block w-1/3 outline-0 h-12 text-black m-auto'
                             type="text"
                             placeholder='Search user'
                             onChange={(e) => setSearchUsers(e.target.value)}

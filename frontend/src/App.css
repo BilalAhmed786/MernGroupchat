@@ -57,3 +57,14 @@ margin-bottom:5px
     margin-left:10px;
     color:black
   }
+
+  .ezkotw {
+    box-sizing: border-box;
+    width: 75% !important;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.87);
+    background-color: #FFFFFF;
+}
