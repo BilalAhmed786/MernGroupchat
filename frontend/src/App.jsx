@@ -16,6 +16,7 @@ import Allrooms from './admin/allrooms'
 import Allusers from './admin/allusers'
 import Allmessages from './admin/allmessages'
 import Pagenotfound from './pages/pagenotfound'
+import Blockusers from './admin/blockusers'
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 function App() {
@@ -39,6 +40,7 @@ function App() {
             <Route path='/allchatrooms' element = {<Adminapiprotect Component = {Allrooms} />} />
             <Route path='/allusers' element = {<Adminapiprotect Component = {Allusers} />} />
             <Route path='/allmessages' element = {<Adminapiprotect Component = {Allmessages} />} />
+            <Route path='/blockusers' element = {<Adminapiprotect Component = {Blockusers} />} />
             {/* not found */}
             <Route path='/*' element = {<Pagenotfound />} />
 

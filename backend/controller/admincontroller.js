@@ -2,6 +2,7 @@ import Message from "../models/message.js";
 import ChatRoom from "../models/chatroom.js"
 import roomuser from "../models/roomusers.js"
 import User from "../models/users.js";
+import Blockuser from "../models/blockuser.js";
 
 
 
@@ -129,15 +130,15 @@ export const deleteroom = async (req, res) => {
 
     try {
 
-       const chatroom = await ChatRoom.findByIdAndDelete(id)
+        const chatroom = await ChatRoom.findByIdAndDelete(id)
 
-       if(chatroom){
-        
-            await Message.deleteMany({room:id})
+        if (chatroom) {
+
+            await Message.deleteMany({ room: id })
 
             return res.json('delete successfully')
-       }
-     
+        }
+
 
     } catch (error) {
 
@@ -174,8 +175,8 @@ export const multiitemdel = (req, res) => {
 
         })
 
-   
-    Message.deleteMany({room:{$in:roomsid}})
+
+    Message.deleteMany({ room: { $in: roomsid } })
 
         .then(() => {
 
@@ -210,17 +211,27 @@ export const allusers = async (req, res) => {
 
     try {
 
+        // const usersroom =[];
+        //users table
         const users = await User.find(query, { password: 0, retypepassword: 0 })
 
-
-        if (users) {
-
-
-            return res.json(users)
+        //rooms table
+        const rooms = await ChatRoom.find()
+        // usersroom.push(users)
 
 
+
+        const usersroom = {
+
+            users: users,
+            rooms: rooms
         }
 
+
+
+
+        console.log(usersroom)
+        return res.json(usersroom)
     } catch (error) {
 
         console.log(error)
@@ -401,5 +412,164 @@ export const multidelmessage = (req, res) => {
 }
 
 
+export const blockuser = (req, res) => {
+
+    const { userId, roomName, isBlocked } = req.body
+
+    if (!roomName) {
+
+        return res.status(400).json("Room not selected")
+
+    }
+
+    if (isBlocked === true) {
 
 
+        Blockuser.findOne({ user: userId, roomname: roomName })
+
+            .then((result) => {
+
+                if (result) {
+
+                    return res.status(400).json(`user already block ${result.roomname}`)
+
+                }
+
+
+                new Blockuser({ roomname: roomName, user: userId }).save()
+                    .then(() => {
+
+                        console.log('block user saved')
+
+                        return res.json('user blocked successfully')
+                    })
+                    .catch((error) => {
+
+                        console.log(error)
+                    })
+
+
+            })
+            .catch((error) => {
+
+                console.log(error)
+            })
+
+
+    }
+
+
+    if (isBlocked === false) {
+
+
+
+        Blockuser.findOneAndDelete({ user: userId, roomname: roomName })
+
+            .then((result) => {
+
+                if (result) {
+
+
+                    console.log(result)
+
+                    return res.json('user unblock successfully')
+
+
+
+                } else {
+
+                    console.log('No matching document found');
+                }
+
+            })
+
+            .catch((error) => {
+
+                console.log(error)
+            })
+
+
+
+    }
+
+
+
+}
+
+
+export const getblockuser = (req, res) => {
+
+    const { search } = req.query
+
+    User.find({ username: { $regex: new RegExp(search, 'i') } })
+        .then((result) => {
+
+            const finduser = result.map(user => user._id);
+
+            const query = {
+
+                $or: [
+
+                    { username: { $regex: new RegExp(search, 'i') } },
+                    { user: { $in: finduser } }
+
+
+                ]
+
+            }
+
+            return Blockuser.find(query).populate({ path: 'user', select: '-password -retypepassword' })
+
+        })
+        .then(blockusers => {
+
+            return res.json(blockusers);
+
+        })
+        .catch((error) => {
+
+            console.log(error)
+
+        })
+
+
+}
+
+
+export const deleteblockuser = (req, res) => {
+
+    const { id } = req.query
+
+    Blockuser.findByIdAndDelete(id)
+
+        .then(() => {
+
+            return res.json('user deleted successfully')
+        })
+        .catch((error) => {
+
+            console.log(error)
+
+        })
+
+
+
+}
+
+export const multipleblockuserdel = (req, res) => {
+
+    const ids = req.body
+
+
+    Blockuser.deleteMany({ _id: { $in: ids } })
+
+        .then((result) => {
+
+            return res.json('selected user deleted')
+        })
+        .catch((error) => {
+
+            console.log(error)
+        })
+
+}
